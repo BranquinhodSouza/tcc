@@ -4,47 +4,89 @@
 % ============================================================
 \documentclass[12pt,a4paper]{article}
 
-% ---- PACOTES ----
+% ---- PACOTES ESSENCIAIS ----
+\usepackage{enumitem} % Permite usar \item[Label] em itemize
 \usepackage[top=3cm, bottom=2cm, left=3cm, right=2cm]{geometry}
 \usepackage[brazil]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage{fontenc}
+\usepackage[T1]{fontenc}
 \usepackage{setspace}
-\usepackage{indentfirst}
+\usepackage{indentfirst} % Recuo no primeiro parágrafo
 \usepackage[backend=biber,style=abnt,extrayear]{biblatex}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{booktabs}
-\usepackage{array}
-\usepackage{xcolor}
 \usepackage{titlesec}
 \usepackage{tocloft}
 \usepackage{fancyhdr}
-\usepackage{enumitem}
-\usepackage{longtable}
-\usepackage{verbatim}
-\usepackage{caption}
+\usepackage{abntex2cite}
+% Definição do comando \fonte
+\newcommand{\fonte}[1]{\textbf{Fonte:} #1}
 
-% ---- CONFIGURAÇÕES ----
-\onehalfspacing
-\setlength{\parindent}{1.25cm}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyfoot[C]{\thepage}
-\renewcommand{\headrulewidth}{0pt}
+% ---- CONFIGURAÇÕES ABNT ----
+\onehalfspacing % Espaçamento 1,5
+\setlength{\parindent}{1.25cm} % Recuo de parágrafo
 
-% Formatação de títulos
-\titleformat{\section}{\bfseries\large}{\thesection}{1em}{}
-\titleformat{\subsection}{\bfseries\normalsize}{\thesubsection}{1em}{}
-\titleformat{\subsubsection}{\bfseries\normalsize}{\thesubsubsection}{1em}{}
-\titlespacing*{\section}{0pt}{12pt}{6pt}
-\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+% Formatação de Títulos (ABNT: Destaque progressivo)
+\titleformat{\section}{\bfseries\uppercase}{\thesection}{1em}{}
+\titleformat{\subsection}{\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\bfseries\itshape}{\thesubsubsection}{1em}{}
 
-% Sumário
-\renewcommand{\cftsecfont}{\normalfont}
-\renewcommand{\cftsecpagefont}{\normalfont}
-\setlength{\cftbeforesecskip}{6pt}
+% Configuração de Sumário
 \renewcommand{\contentsname}{SUMÁRIO}
+\renewcommand{\cftsecfont}{\bfseries}
+
+% ---- REFERÊNCIAS ----
+\addbibresource{refs.bib}
+
+\begin{document}
+
+% ===== CAPA =====
+\begin{titlepage}
+  \begin{center}
+    \uppercase{Instituto Federal de Educação, Ciência e Tecnologia de Goiás}\\
+    \uppercase{Campus Goiânia}\\
+    Departamento das Áreas Acadêmicas IV\\
+    Coordenação de Informática\\
+    Bacharelado em Sistemas de Informação\\[2.5cm]
+
+    \textbf{PAULO BRANQUINHO DE SOUZA}\\[3.5cm]
+
+    \textbf{\uppercase{Análise de evasão no PROEJA do IFG Campus Goiânia: identificação de padrões, propostas de intervenção e desenvolvimento de um dashboard para monitoramento}}\\[3.5cm]
+
+    Pré-projeto de Trabalho de Conclusão de Curso apresentado ao Instituto Federal de Goiás como requisito básico para a conclusão do curso de Bacharelado em Sistemas de Informação.\\[1cm]
+
+    Orientador: Prof. <título>. <nome>\\[3cm]
+
+    Goiânia/GO\\
+    2026
+  \end{center}
+\end{titlepage}
+
+% ===== FICHA CATALOGRÁFICA (Exemplo de layout) =====
+\newpage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+\fbox{\begin{minipage}[c]{12cm}
+\small
+\vspace{0.5cm}
+\hspace{0.5cm} Souza, Paulo Branquinho de. \\
+\hspace{0.5cm} Análise de evasão no PROEJA do IFG Campus Goiânia / Paulo Branquinho de Souza. -- 2026. \\
+\hspace{0.5cm} 20 p. \\
+\vspace{0.3cm}
+\hspace{0.5cm} Orientador: Prof. <nome>. \\
+\hspace{0.5cm} Pré-projeto (Bacharelado) -- Instituto Federal de Goiás, 2026. \\
+\vspace{0.3cm}
+\hspace{0.5cm} 1. Evasão escolar. 2. EJA. 3. Dashboard. I. Título. \\
+\vspace{0.5cm}
+\end{minipage}}
+\end{center}
+
+% ===== SUMÁRIO =====
+\newpage
+\tableofcontents
+\newpage
 
 % ---- HIPERLINKS ----
 \hypersetup{
@@ -291,7 +333,6 @@
   year      = {2019}
 }
 \end{filecontents}
-\addbibresource{refs.bib}
 
 % ---- INÍCIO DO DOCUMENTO ----
 \begin{document}
