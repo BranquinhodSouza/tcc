@@ -191,9 +191,9 @@ df['idade_categoria'] = pd.cut(df['idade'], bins=[0, 25, 35, 45, 100],
 df['ano_ingresso'] = df['semestre_ingresso'].str.split('.').str[0].astype(int)
 
 # Salvar
-df.to_csv('dados_evasao_proeja_500.csv', index=False)
+df.to_csv('../data/dados_evasao_proeja_ifg.csv', index=False)
 print(f"\nDataset gerado: {N} alunos")
 print(f"Colunas: {list(df.columns)}")
 print(f"Taxa de evasão: {n_evadidos/N:.1%}")
 print(f"Média de meses até evasão: {df[df.status=='Evadido']['meses_cursados'].mean():.1f}")
-print(f"Arquivo salvo: dados_evasao_proeja_500.csv")
+print(f"Arquivo salvo: ../data/dados_evasao_proeja_ifg.csv")

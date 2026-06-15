@@ -24,7 +24,7 @@ print("=" * 60)
 print("ANÁLISE EXPLORATÓRIA DE DADOS - EVASÃO PROEJA IFG GOIÂNIA")
 print("=" * 60)
 
-df = pd.read_csv('dados_evasao_proeja_500.csv')
+df = pd.read_csv('../data/dados_evasao_proeja_ifg.csv')
 print(f"\nDataset: {len(df)} alunos, {len(df.columns)} variáveis")
 
 # ========== 2. VISÃO GERAL DOS DADOS ==========
