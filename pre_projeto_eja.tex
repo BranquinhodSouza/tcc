@@ -1,0 +1,638 @@
+% ============================================================
+% PRÉ-PROJETO DE TCC - EVASÃO PROEJA IFG GOIÂNIA
+% Compilar com: xelatex + biber (ou latexmk)
+% ============================================================
+\documentclass[12pt,a4paper]{article}
+
+% ---- PACOTES ----
+\usepackage[top=3cm, bottom=2cm, left=3cm, right=2cm]{geometry}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fontenc}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage[backend=biber,style=abnt,extrayear]{biblatex}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{verbatim}
+\usepackage{caption}
+
+% ---- CONFIGURAÇÕES ----
+\onehalfspacing
+\setlength{\parindent}{1.25cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+% Formatação de títulos
+\titleformat{\section}{\bfseries\large}{\thesection}{1em}{}
+\titleformat{\subsection}{\bfseries\normalsize}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\bfseries\normalsize}{\thesubsubsection}{1em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+
+% Sumário
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+\setlength{\cftbeforesecskip}{6pt}
+\renewcommand{\contentsname}{SUMÁRIO}
+
+% ---- HIPERLINKS ----
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  citecolor=black
+}
+
+% ---- ARQUIVO DE REFERÊNCIAS ----
+\begin{filecontents}[overwrite]{refs.bib}
+@book{freire2023,
+  author    = {Paulo Freire},
+  title     = {Pedagogia do Oprimido},
+  edition   = {87},
+  publisher = {Paz e Terra},
+  address   = {Rio de Janeiro},
+  year      = {2023}
+}
+@article{dipierro2005,
+  author    = {Maria Clara Di Pierro},
+  title     = {Notas sobre a redefinição da identidade e das políticas públicas da educação de jovens e adultos no Brasil},
+  journal   = {Educação \& Sociedade},
+  volume    = {26},
+  number    = {92},
+  pages     = {1115--1139},
+  year      = {2005}
+}
+@book{arroyo2017,
+  author    = {Miguel Arroyo},
+  title     = {Passageiros da noite: do trabalho para a EJA, itinerários pelo direito a uma vida justa},
+  publisher = {Vozes},
+  address   = {Petrópolis},
+  year      = {2017}
+}
+@article{oliveira2021,
+  author    = {Paula Lucas Oliveira and Nilva Celestina Do Carmo},
+  title     = {A temática evasão escolar no contexto do PROEJA: uma revisão integrativa},
+  journal   = {Revista Ponto de Vista},
+  volume    = {10},
+  number    = {1},
+  pages     = {01--21},
+  year      = {2021}
+}
+@article{nery2020,
+  author    = {Maria Clara Ramos Nery and Juliana Oliveira Pereira and Patricia Guerreiro Do Amaral},
+  title     = {Educação de Jovens e Adultos — EJA — seus impasses e suas contradições},
+  journal   = {Revista Eletrônica Científica da UERGS},
+  volume    = {6},
+  number    = {1},
+  pages     = {29--41},
+  year      = {2020}
+}
+@article{castro2016,
+  author    = {Mad'Ana Desirée Ribeiro De Castro and Jacqueline Maria Barbosa Vitorette},
+  title     = {O Programa de Integração da Educação Profissional com a Educação Básica na Modalidade de Educação de Jovens e Adultos (PROEJA) no IFG - Câmpus Goiânia: um percurso contraditório na construção do direito à educação},
+  journal   = {HOLOS},
+  volume    = {2},
+  pages     = {301--318},
+  year      = {2016}
+}
+@mastersthesis{pereira2011,
+  author    = {Josué Vidal Pereira},
+  title     = {O PROEJA no Instituto Federal de Goiás -- Campus Goiânia: um estudo sobre os fatores de acesso e permanência na escola},
+  school    = {Universidade de Brasília},
+  address   = {Brasília},
+  year      = {2011}
+}
+@mastersthesis{castro2018,
+  author    = {Mad'Ana Desirée Ribeiro De Castro},
+  title     = {O PROEJA no IFG - Câmpus Goiânia: contradições, limites e perspectivas},
+  school    = {Pontifícia Universidade Católica de Goiás},
+  address   = {Goiânia},
+  year      = {2018}
+}
+@article{santos2025,
+  author    = {Áurea Fernandes Dos Santos and Salete De Almeida Lima Brigato and Everson Carlos Marin Lopes and Luana De Araújo Almeida},
+  title     = {Desafios da Educação de Jovens e Adultos no Brasil: entre metodologias inadequadas e políticas instáveis},
+  journal   = {Missioneira},
+  volume    = {27},
+  number    = {1},
+  pages     = {103--114},
+  year      = {2025}
+}
+@article{dutra2026,
+  author    = {Maria de Fátima Calógeras Dutra and Andréa Carla de Lima Melo and Rozineide Iraci Pereira da Silva},
+  title     = {Desafios e Perspectivas da Educação de Jovens e Adultos (EJA): um olhar sobre a evasão e a prática pedagógica no Brasil Contemporâneo},
+  journal   = {REASE},
+  volume    = {12},
+  number    = {5},
+  year      = {2026}
+}
+@book{tinto1975,
+  author    = {Vincent Tinto},
+  title     = {Dropout from Higher Education: A Theoretical Synthesis of Recent Research},
+  journal   = {Review of Educational Research},
+  volume    = {45},
+  number    = {1},
+  pages     = {89--125},
+  year      = {1975}
+}
+@book{frignotto2005,
+  author    = {Gaudêncio Frigotto and Maria Ciavatta and Marise Ramos},
+  title     = {Ensino médio integrado: concepção e contradições},
+  publisher = {Cortez},
+  address   = {São Paulo},
+  year      = {2005}
+}
+@article{assis2017,
+  author    = {Lucas Rocha Soares De Assis},
+  title     = {Perfil de evasão no ensino superior brasileiro: uma abordagem de mineração de dados},
+  school    = {Universidade de Brasília},
+  address   = {Brasília},
+  year      = {2017}
+}
+@article{silva2023,
+  author    = {Tânia das Graças de Castro e Silva and Rosângela de Bessa Barbosa da Silva and Gislene Lisboa de Oliveira},
+  title     = {Educação de Jovens e Adultos em Goiás e Goiânia à luz dos dados do INEP: balanço analítico das metas 8, 9 e 10},
+  journal   = {Revista Sapiência},
+  volume    = {12},
+  number    = {2},
+  pages     = {88--104},
+  year      = {2023}
+}
+@book{gil2008,
+  author    = {Antônio Carlos Gil},
+  title     = {Métodos e técnicas de pesquisa social},
+  edition   = {6},
+  publisher = {Atlas},
+  address   = {São Paulo},
+  year      = {2008}
+}
+@book{creswell2010,
+  author    = {John W. Creswell},
+  title     = {Projeto de pesquisa: métodos qualitativo, quantitativo e misto},
+  edition   = {3},
+  publisher = {Artmed},
+  address   = {Porto Alegre},
+  year      = {2010}
+}
+@book{tolentino2025,
+  author    = {Dorgival Tolentino Filho},
+  title     = {Educação de jovens e adultos no Brasil: Avanços, desafios e perspectivas},
+  journal   = {International Integralize Scientific},
+  volume    = {5},
+  number    = {46},
+  year      = {2025}
+}
+@techreport{todos2025,
+  author    = {{Todos pela Educação}},
+  title     = {Anuário Brasileiro da Educação Básica 2025},
+  address   = {São Paulo},
+  year      = {2025}
+}
+@misc{inep2024,
+  author    = {{INEP}},
+  title     = {Censo Escolar da Educação Básica 2024},
+  address   = {Brasília},
+  year      = {2024}
+}
+@article{baker2014,
+  author    = {Ryan S. Baker and Paul S. Inventado},
+  title     = {Educational Data Mining and Learning Analytics},
+  booktitle = {Learning Analytics},
+  publisher = {Springer},
+  pages     = {61--75},
+  year      = {2014}
+}
+@book{few2006,
+  author    = {Stephen Few},
+  title     = {Information Dashboard Design: The Effective Visual Communication of Data},
+  publisher = {O'Reilly Media},
+  year      = {2006}
+}
+@book{mckinney2018,
+  author    = {Wes McKinney},
+  title     = {Python for Data Analysis},
+  edition   = {2},
+  publisher = {O'Reilly Media},
+  year      = {2018}
+}
+@book{prodanov2013,
+  author    = {Cleber C. Prodanov and Ernani C. de Freitas},
+  title     = {Metodologia do trabalho científico: métodos e técnicas da pesquisa e do trabalho acadêmico},
+  edition   = {2},
+  publisher = {Feevale},
+  address   = {Novo Hamburgo},
+  year      = {2013}
+}
+@book{hastie2009,
+  author    = {Trevor Hastie and Robert Tibshirani and Jerome Friedman},
+  title     = {The Elements of Statistical Learning},
+  edition   = {2},
+  publisher = {Springer},
+  year      = {2009}
+}
+@book{tufte2001,
+  author    = {Edward R. Tufte},
+  title     = {The Visual Display of Quantitative Information},
+  edition   = {2},
+  publisher = {Graphics Press},
+  year      = {2001}
+}
+@misc{mec2005,
+  author    = {{MEC}},
+  title     = {Decreto nº 5.478, de 24 de junho de 2005},
+  year      = {2005}
+}
+@misc{mec2006,
+  author    = {{MEC}},
+  title     = {Decreto nº 5.840, de 13 de julho de 2006},
+  year      = {2006}
+}
+\end{filecontents}
+\addbibresource{refs.bib}
+
+% ---- INÍCIO DO DOCUMENTO ----
+\begin{document}
+
+% ===== CAPA =====
+\begin{titlepage}
+  \begin{center}
+    \textbf{INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DE GOIÁS}\\[0.2cm]
+    \textbf{CAMPUS GOIÂNIA}\\[0.2cm]
+    DEPARTAMENTO DAS ÁREAS ACADÊMICAS IV\\[0.2cm]
+    COORDENAÇÃO DE INFORMÁTICA\\[0.2cm]
+    \textbf{BACHARELADO EM SISTEMAS DE INFORMAÇÃO}\\[2.5cm]
+
+    \textbf{PAULO BRANQUINHO DE SOUZA}\\[3.5cm]
+
+    \textbf{ANÁLISE DE EVASÃO NO PROEJA DO IFG CAMPUS GOIÂNIA:}\\[0.15cm]
+    \textbf{IDENTIFICAÇÃO DE PADRÕES, PROPOSTAS DE INTERVENÇÃO}\\[0.15cm]
+    \textbf{E DESENVOLVIMENTO DE UM DASHBOARD PARA MONITORAMENTO}\\[3.5cm]
+
+    PRÉ-PROJETO DE TRABALHO DE CONCLUSÃO DE CURSO\\[0.3cm]
+    \onehalfspacing
+    Pré-projeto de Trabalho de Conclusão de Curso apresentado no Instituto Federal de Goiás como requisito básico para a conclusão do curso de Bacharelado em Sistemas de Informação.\\[1cm]
+
+    Orientador: Prof. \textit{<título>}. \textit{<nome>}\\[3cm]
+
+    Goiânia/GO\\
+    2026
+  \end{center}
+\end{titlepage}
+
+% ===== FICHA CATALOGRÁFICA =====
+\newpage
+\thispagestyle{empty}
+\begin{center}
+  \textbf{Paulo Branquinho de Souza}
+\end{center}
+
+\noindent Análise de evasão no PROEJA do IFG Campus Goiânia: identificação de padrões, propostas de intervenção e desenvolvimento de um dashboard para monitoramento / Paulo Branquinho de Souza. --- Goiânia, 2026.
+
+\vspace{0.8cm}
+\noindent Pré-projeto de Trabalho de Conclusão de Curso (Bacharelado em Sistemas de Informação) --- Instituto Federal de Educação, Ciência e Tecnologia de Goiás, Campus Goiânia, 2026.
+
+\vspace{0.3cm}
+\noindent Orientador: Prof. \textit{<título>}. \textit{<nome>}
+
+\vspace{0.3cm}
+\noindent 1. Evasão escolar. 2. EJA. 3. PROEJA. 4. IFG Goiânia. 5. Dashboard. 6. Análise de dados educacionais. I. Título.
+
+% ===== SUMÁRIO =====
+\newpage
+\tableofcontents
+\newpage
+
+% ===== LISTA DE TABELAS E FIGURAS =====
+\listoftables
+\addcontentsline{toc}{section}{LISTA DE TABELAS}
+
+\listoffigures
+\addcontentsline{toc}{section}{LISTA DE FIGURAS}
+\newpage
+
+% ===== LISTA DE ABREVIATURAS =====
+\section*{LISTA DE ABREVIATURAS}
+\addcontentsline{toc}{section}{LISTA DE ABREVIATURAS}
+
+\begin{tabular}{ll}
+\textbf{AUC} & Area Under the Curve (Área sob a Curva) \\
+\textbf{BI}  & Business Intelligence \\
+\textbf{CAPES} & Coordenação de Aperfeiçoamento de Pessoal de Nível Superior \\
+\textbf{EDA} & Exploratory Data Analysis (Análise Exploratória de Dados) \\
+\textbf{EJA} & Educação de Jovens e Adultos \\
+\textbf{IFG} & Instituto Federal de Goiás \\
+\textbf{INEP} & Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira \\
+\textbf{KPI} & Key Performance Indicator (Indicador-Chave de Desempenho) \\
+\textbf{LDB} & Lei de Diretrizes e Bases da Educação Nacional \\
+\textbf{LGPD} & Lei Geral de Proteção de Dados Pessoais \\
+\textbf{MEC} & Ministério da Educação \\
+\textbf{PNAES} & Programa Nacional de Assistência Estudantil \\
+\textbf{PNE} & Plano Nacional de Educação \\
+\textbf{PROEJA} & Programa de Integração da Educação Profissional com a Educação Básica na Modalidade de Educação de Jovens e Adultos \\
+\textbf{ROC} & Receiver Operating Characteristic \\
+\textbf{SI} & Sistemas de Informação \\
+\end{tabular}
+\newpage
+
+% ============================================================
+% 1 INTRODUÇÃO
+% ============================================================
+\section{INTRODUÇÃO}
+
+A Educação de Jovens e Adultos (EJA) constitui uma modalidade de ensino fundamental para a promoção da inclusão social e do resgate da cidadania de sujeitos historicamente marginalizados do processo educacional brasileiro. Conforme dados do Anuário Brasileiro da Educação Básica \cite{todos2025}, o acesso à EJA caiu 34,5\% na última década, registrando 2,4 milhões de matrículas em 2024, o menor número da série histórica. Paralelamente, 29\% dos brasileiros de 15 a 64 anos são analfabetos funcionais, evidenciando a persistência de um grave déficit educacional.
+
+No âmbito da Rede Federal de Educação Profissional e Tecnológica, o Programa de Integração da Educação Profissional com a Educação Básica na Modalidade de Educação de Jovens e Adultos (PROEJA) foi instituído pelo Decreto nº 5.478/2005 \cite{mec2005}, posteriormente ampliado pelo Decreto nº 5.840/2006 \cite{mec2006}. O programa representa uma tentativa de superar a histórica separação entre educação geral e formação profissional no Brasil \cite{frignotto2005}, ofertando educação profissional técnica de nível médio integrada ao ensino médio na modalidade EJA.
+
+No Instituto Federal de Goiás (IFG) -- Campus Goiânia, o PROEJA teve início com os Cursos Técnicos Integrados em Serviços de Alimentação e Cozinha, enfrentando desde sua origem desafios significativos relacionados à evasão escolar. Estudos específicos como os de \citeonline{pereira2011} e \citeonline{castro2016} revelam um percurso contraditório na construção do direito à educação, marcado por resistência institucional, focalização do programa e inadequação metodológica.
+
+Diante deste cenário, identifica-se a necessidade de investigar de forma sistemática os padrões de evasão no PROEJA do IFG Campus Goiânia, integrando análise de dados institucionais e referencial teórico sobre educação de jovens e adultos. O desafio reside em como a tecnologia da informação, por meio de ferramentas de \textit{Business Intelligence} (BI) e análise preditiva, pode auxiliar na identificação precoce de alunos em risco de abandono e no monitoramento contínuo dos indicadores de permanência.
+
+Nesse contexto, assume-se que o desenvolvimento de um \textit{dashboard} interativo para visualização e análise dos dados de evasão, combinado com a identificação de padrões sociodemográficos e institucionais, permitirá à gestão acadêmica tomar decisões mais informadas para a elaboração de políticas de permanência estudantil. Espera-se que esta pesquisa contribua para a redução dos índices de abandono e para o fortalecimento do PROEJA como política pública de inclusão educacional.
+
+% ============================================================
+% 2 JUSTIFICATIVA
+% ============================================================
+\section{JUSTIFICATIVA}
+
+A escolha deste tema justifica-se pela relevância social e acadêmica da EJA no Brasil, modalidade que atende majoritariamente alunos pretos e pardos (76,8\% das matrículas), trabalhadores de baixa renda e pessoas em situação de vulnerabilidade social \cite{todos2025}. A evasão escolar no PROEJA representa não apenas o desperdício de recursos públicos, mas também a perpetuação de um ciclo de exclusão educacional que compromete a mobilidade social desses indivíduos.
+
+O presente trabalho contribui diretamente para a formação esperada no Perfil do Egresso do curso de Sistemas de Informação, uma vez que exige a aplicação integrada de conhecimentos multidisciplinares das seguintes áreas:
+
+\begin{itemize}[leftmargin=1.25cm]
+    \item[\textbf{Banco de Dados:}] modelagem e estruturação dos dados institucionais de matrícula, frequência e evasão, aplicando técnicas de modelagem dimensional para suporte à decisão;
+    \item[\textbf{Business Intelligence:}] desenvolvimento de \textit{dashboard} interativo utilizando ferramentas como Power BI ou Google Looker Studio para análise de indicadores educacionais;
+    \item[\textbf{Mineração de Dados:}] aplicação de técnicas de análise exploratória e identificação de padrões nos dados de evasão, permitindo a construção de modelos preditivos de risco;
+    \item[\textbf{Engenharia de Software:}] levantamento de requisitos e modelagem do sistema de monitoramento, garantindo que a solução siga padrões de qualidade e usabilidade.
+\end{itemize}
+
+Do ponto de vista institucional, a pesquisa oferece ao IFG Campus Goiânia um instrumento concreto para o monitoramento da evasão, permitindo a identificação precoce de alunos em risco e a avaliação do impacto das políticas de assistência estudantil. Conforme \citeonline{oliveira2021}, a temática da evasão no PROEJA ainda carece de estudos aprofundados que integrem análise quantitativa de dados e propostas de intervenção baseadas em evidências.
+
+A inovação deste trabalho reside na integração de técnicas de análise de dados educacionais com a proposição de medidas práticas de intervenção, consolidando o papel do Bacharel em Sistemas de Informação como um agente capaz de projetar, implementar e gerenciar soluções tecnológicas que impactam positivamente a sociedade e a gestão educacional pública.
+
+% ============================================================
+% 3 OBJETIVOS
+% ============================================================
+\section{OBJETIVOS}
+
+\subsection{Objetivo Geral}
+
+Analisar os fatores associados à evasão no PROEJA do IFG Campus Goiânia, identificando padrões sociodemográficos e institucionais, propondo medidas de intervenção e desenvolvendo um \textit{dashboard} interativo para monitoramento contínuo dos indicadores de permanência estudantil.
+
+\subsection{Objetivos Específicos}
+
+\begin{enumerate}[leftmargin=1.25cm]
+    \item Levantar o referencial teórico sobre evasão escolar na EJA e no PROEJA, com ênfase em estudos realizados no IFG Campus Goiânia;
+    \item Identificar os principais fatores que contribuem para a evasão nos cursos PROEJA do IFG Campus Goiânia, a partir da análise de dados institucionais e da literatura existente;
+    \item Mapear o perfil sociodemográfico dos alunos evadidos (faixa etária, sexo, raça, renda, situação de trabalho, presença de filhos) para identificação de grupos de risco;
+    \item Elaborar um conjunto de propostas de intervenção institucional, pedagógica e de apoio ao estudante visando a redução das taxas de evasão;
+    \item Modelar e desenvolver um \textit{dashboard} interativo para visualização dos indicadores de evasão, utilizando ferramentas de \textit{Business Intelligence};
+    \item Avaliar a eficácia do \textit{dashboard} como ferramenta de apoio à gestão acadêmica na tomada de decisões relacionadas à permanência estudantil.
+\end{enumerate}
+
+% ============================================================
+% 4 REFERENCIAL TEÓRICO
+% ============================================================
+\section{REFERENCIAL TEÓRICO}
+
+\subsection{Fundamentos da Educação de Jovens e Adultos no Brasil}
+
+A Educação de Jovens e Adultos (EJA) no Brasil constitui uma modalidade educativa amparada pela Lei de Diretrizes e Bases da Educação Nacional (LDB 9.394/96), que em seu art. 37 estabelece que a educação de jovens e adultos será destinada àqueles que não tiveram acesso ou oportunidade de estudos no ensino fundamental e médio na idade própria.
+
+Historicamente, a EJA no Brasil emerge de um contexto de exclusão social e educacional. Conforme \citeonline{dipierro2005}, a modalidade se constituiu como uma política compensatória, voltada para reparar uma dívida histórica com a população trabalhadora. A autora argumenta que a EJA oscila entre a função de ``reparação'' e a de ``educação permanente'', sendo frequentemente relegada a segundo plano nas políticas educacionais brasileiras.
+
+O pensamento de \citeonline{freire2023} é fundamental para compreender a EJA sob uma perspectiva crítica e emancipadora. Freire propõe uma educação dialógica, que parte da realidade vivida pelos educandos, valorizando seus saberes prévios e experiências de vida. Para Freire, a educação de adultos não pode ser uma mera transferência de conhecimento, mas um ato de conhecimento onde educador e educando aprendem juntos, na problematização do mundo. Essa abordagem contrapõe-se ao que o autor chama de ``educação bancária'', onde o aluno é visto como um recipiente vazio a ser preenchido pelo professor.
+
+A EJA atende majoritariamente um público marcado pela diversidade e pela vulnerabilidade social. Dados do Anuário Brasileiro da Educação Básica \cite{todos2025} indicam que 76,8\% dos alunos da EJA são pretos ou pardos, e a maioria possui renda familiar de até 1,5 salários mínimos. Esse perfil demográfico evidencia a interseção entre desigualdade racial e educacional no Brasil, tema explorado por \citeonline{arroyo2017}, que destaca a necessidade de políticas específicas para os ``sujeitos da EJA''.
+
+\subsection{O PROEJA como Política de Integração}
+
+O Programa Nacional de Integração da Educação Profissional com a Educação Básica na Modalidade de Educação de Jovens e Adultos (PROEJA) foi instituído para superar a histórica separação entre educação geral e formação profissional no Brasil. De acordo com \citeonline{frignotto2005}, a integração entre educação profissional e educação básica visa superar a dualidade educacional brasileira, que historicamente ofereceu uma educação acadêmica para as elites e uma educação profissional aligeirada para as classes trabalhadoras.
+
+Entretanto, a implementação do PROEJA tem enfrentado inúmeros desafios. \citeonline{pereira2011} aponta que o programa foi implantado de forma compulsória nas instituições federais, sem a devida preparação institucional e sem a participação efetiva dos docentes na construção dos projetos político-pedagógicos.
+
+\subsection{Evasão Escolar na EJA e no PROEJA}
+
+A evasão escolar é um fenômeno complexo e multidimensional, definido por \citeonline{tinto1975} como o processo de abandono do curso ou instituição antes da conclusão. No contexto da EJA, a evasão assume contornos específicos, sendo frequentemente associada a fatores externos ao ambiente escolar.
+
+\citeonline{oliveira2021}, em sua revisão integrativa sobre a evasão no PROEJA, identificaram duas grandes categorias de causas: (1) fatores relacionados ao trabalho, remuneração e benefícios sociais; e (2) fatores relacionados à formação e prática docente. A primeira categoria reflete a realidade do aluno-trabalhador, que muitas vezes precisa optar entre o estudo e a sobrevivência. A segunda categoria revela a inadequação das práticas pedagógicas tradicionais para atender as especificidades dos estudantes jovens e adultos.
+
+\citeonline{nery2020} investigaram as mediações pedagógicas em turmas de EJA e constataram que predomina uma prática de ensino alicerçada na didática tradicional (``bancária''), em detrimento de uma abordagem contextualizada e dialógica. Os autores observaram que o número de professores preparados para atuar na EJA é insuficiente, e que a capacitação específica para a modalidade é rara.
+
+\citeonline{santos2025} analisam os desafios da EJA no século XXI, destacando a permanência de metodologias pedagógicas inadequadas, a descontinuidade das políticas públicas e os efeitos do envelhecimento populacional. \citeonline{tolentino2025} reforça que o fortalecimento da EJA requer o comprometimento do poder público, da sociedade civil e da comunidade acadêmica na construção de políticas permanentes e eficazes.
+
+\subsection{Estudos sobre o PROEJA no IFG Campus Goiânia}
+
+\citeonline{pereira2011} desenvolveu um estudo de caso sobre o PROEJA no IFG Campus Goiânia, investigando os fatores de acesso e permanência na escola. A pesquisa revelou que os alunos do PROEJA são majoritariamente trabalhadores, com idade entre 18 e 40 anos, que buscam no programa tanto a conclusão da educação básica quanto a qualificação profissional. Os principais fatores de evasão identificados foram: incompatibilidade entre horário de trabalho e aula, cansaço físico, dificuldades de aprendizagem e falta de apoio familiar.
+
+\citeonline{castro2016} analisaram o percurso contraditório do PROEJA no IFG Campus Goiânia, apontando que o programa foi implementado de forma focalizada, com adesão inicial de apenas uma coordenação de área (Turismo e Hospitalidade). As autoras argumentam que a resistência institucional ao PROEJA reflete uma visão elitista da educação profissional. Em sua dissertação, \citeonline{castro2018} aprofunda a análise das contradições, limites e perspectivas, examinando os cursos Técnicos Integrados em Serviços de Alimentação e Cozinha.
+
+\subsection{Análise de Dados Educacionais e Mineração de Dados}
+
+A análise de dados educacionais tem se consolidado como área promissora para compreensão dos fenômenos educacionais. \citeonline{assis2017} aplicou técnicas de mineração de dados para criar perfis de estudantes com propensão à evasão no ensino superior brasileiro, utilizando algoritmos de classificação como CART e \textit{Random Forest}. O estudo identificou que as principais características dos alunos com maior risco de evasão incluem: ingressar no primeiro semestre, possuir vínculos com mais de uma instituição e ter notas acima da média no ENEM.
+
+A utilização de \textit{dashboards} para monitoramento educacional tem se expandido como ferramenta de apoio à gestão acadêmica. Segundo \citeonline{few2006}, \textit{dashboards} são displays visuais das informações mais importantes, consolidadas em uma única tela para monitoramento rápido. No contexto educacional, \textit{dashboards} de evasão permitem que gestores identifiquem precocemente alunos em risco e avaliem o impacto de políticas de assistência estudantil.
+
+\begin{table}[h!]
+\centering
+\caption{Síntese do Referencial Teórico}
+\label{tab:referencial}
+\begin{tabular}{p{4cm}p{3.5cm}p{6cm}}
+\toprule
+\textbf{Autor(es)} & \textbf{Ano} & \textbf{Contribuição Principal} \\
+\midrule
+Freire & 2023 & Educação dialógica e emancipadora para adultos \\
+Di Pierro & 2005 & Políticas públicas e identidade da EJA \\
+Arroyo & 2017 & Sujeitos da EJA e direitos educacionais \\
+Pereira & 2011 & Fatores de acesso/permanência no PROEJA IFG \\
+Castro \& Vitorette & 2016 & Contradições na implantação do PROEJA IFG \\
+Oliveira \& Carmo & 2021 & Revisão integrativa: causas de evasão no PROEJA \\
+Nery, Pereira \& Amaral & 2020 & Mediações pedagógicas na EJA \\
+Assis & 2017 & Mineração de dados para perfil de evasão \\
+\bottomrule
+\end{tabular}
+\fonte{Elaborado pelo autor (2026).}
+\end{table}
+
+% ============================================================
+% 5 METODOLOGIA
+% ============================================================
+\section{METODOLOGIA DA PESQUISA}
+
+\subsection{Classificação da Pesquisa}
+
+Quanto à sua natureza, esta pesquisa classifica-se como \textbf{aplicada}, pois visa gerar conhecimentos para aplicação prática na solução de um problema real -- a evasão escolar no PROEJA do IFG Campus Goiânia \cite{prodanov2013}. Do ponto de vista dos objetivos, a pesquisa é \textbf{exploratória e descritiva}: exploratória por proporcionar maior familiaridade com o problema, envolvendo levantamento bibliográfico e análise de dados; descritiva por descrever as características do fenômeno e estabelecer relações entre variáveis \cite{gil2008}.
+
+Quanto à abordagem, caracteriza-se como \textbf{mista} \cite{creswell2010}, combinando métodos quantitativos e qualitativos:
+\begin{itemize}
+    \item \textbf{Quantitativa}: na análise estatística dos dados de evasão, na aplicação de testes de hipótese e na construção de modelos preditivos;
+    \item \textbf{Qualitativa}: na interpretação dos fatores contextuais e institucionais que influenciam a evasão.
+\end{itemize}
+
+\subsection{Procedimentos Metodológicos}
+
+O desenvolvimento da pesquisa será organizado em seis fases interligadas, conforme apresentado na Tabela~\ref{tab:fases}.
+
+\begin{table}[h!]
+\centering
+\caption{Fases da Pesquisa}
+\label{tab:fases}
+\begin{tabular}{c p{3cm} p{7cm}}
+\toprule
+\textbf{Fase} & \textbf{Atividade} & \textbf{Descrição} \\
+\midrule
+1 & Revisão Sistemática & Levantamento em Google Acadêmico, SciELO, CAPES, Repositórios UnB e PUC Goiás. Descritores: ``evasão escolar'', ``PROEJA'', ``EJA'', ``IFG''. \\
+2 & Coleta de Dados & Solicitação ao Registro Acadêmico do IFG: matrículas, notas, frequência, dados sociodemográficos. Anonimização conforme LGPD. \\
+3 & Análise Exploratória (EDA) & Python (pandas, numpy, matplotlib, seaborn, scipy). Estatísticas descritivas, visualizações, testes de hipótese ($\chi^2$, $t$, ANOVA). \\
+4 & Modelagem Preditiva & Regressão Logística e \textit{Random Forest}. Validação cruzada ($k=5$). Métricas: acurácia, precisão, revocação, F1, AUC-ROC. \\
+5 & Desenvolvimento do Dashboard & Power BI ou Looker Studio: KPIs, série histórica, perfil, alerta precoce, motivos. \\
+6 & Propostas de Intervenção & Recomendações em 3 eixos: institucional, pedagógico e tecnológico. \\
+\bottomrule
+\end{tabular}
+\fonte{Elaborado pelo autor (2026).}
+\end{table}
+
+\subsection{Instrumentos de Coleta e Análise}
+
+\begin{table}[h!]
+\centering
+\caption{Instrumentos da Pesquisa}
+\label{tab:instrumentos}
+\begin{tabular}{p{4cm} p{5.5cm} p{4.5cm}}
+\toprule
+\textbf{Instrumento} & \textbf{Finalidade} & \textbf{Fonte} \\
+\midrule
+Sistema Acadêmico (Q-Acadêmico/SUAP) & Dados de matrícula, notas, frequência & Coordenação de Registro Acadêmico \\
+Questionário de perfil & Dados sociodemográficos complementares & Alunos matriculados \\
+Entrevista semiestruturada & Motivos de evasão (dados qualitativos) & Alunos evadidos \\
+Análise documental & Projeto Pedagógico dos cursos, relatórios & Coordenação dos cursos PROEJA \\
+\bottomrule
+\end{tabular}
+\fonte{Elaborado pelo autor (2026).}
+\end{table}
+
+\subsection{Aspectos Éticos}
+
+A pesquisa será submetida ao Comitê de Ética em Pesquisa (CEP) do IFG para aprovação, em conformidade com a Resolução CNS nº 510/2016. Será garantido o anonimato dos participantes e a possibilidade de desistência a qualquer momento. Os dados institucionais serão tratados conforme a Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018), com acesso restrito aos pesquisadores e utilização exclusiva para fins acadêmicos.
+
+% ============================================================
+% 6 CRONOGRAMA
+% ============================================================
+\section{CRONOGRAMA}
+
+\begin{table}[h!]
+\centering
+\caption{Cronograma de Execução}
+\label{tab:cronograma}
+\begin{tabular}{lcccccccc}
+\toprule
+\textbf{Atividade} & \textbf{Abr} & \textbf{Mai} & \textbf{Jun} & \textbf{Jul} & \textbf{Ago} & \textbf{Set} & \textbf{Out} & \textbf{Nov} \\
+\midrule
+1. Revisão Bibliográfica     & X & X &   &   &   &   &   &   \\
+2. Coleta e Preparação dos Dados &   & X & X &   &   &   &   &   \\
+3. Escrita TCC 1             & X & X & X & X &   &   &   &   \\
+4. EDA e Modelagem          &   &   &   & X & X &   &   &   \\
+5. Desenvolvimento Dashboard &   &   &   &   & X & X &   &   \\
+6. Propostas de Intervenção &   &   &   &   &   & X &   &   \\
+7. Escrita TCC 2             &   &   &   &   &   & X & X & X \\
+8. Preparação para Defesa   &   &   &   &   &   &   &   & X \\
+\bottomrule
+\end{tabular}
+\fonte{Elaborado pelo autor (2026).}
+\end{table}
+
+% ============================================================
+% REFERÊNCIAS
+% ============================================================
+\newpage
+\addcontentsline{toc}{section}{REFERÊNCIAS BIBLIOGRÁFICAS}
+\printbibliography[title={REFERÊNCIAS BIBLIOGRÁFICAS}]
+
+% ============================================================
+% APÊNDICE - Resultados do EDA
+% ============================================================
+\newpage
+\begin{appendix}
+\section{APÊNDICE A -- RESULTADOS DA ANÁLISE EXPLORATÓRIA DE DADOS}
+
+Este apêndice apresenta os principais resultados obtidos na análise exploratória de dados realizada com um dataset sintético de 500 alunos, representando o perfil típico dos estudantes do PROEJA no IFG Campus Goiânia.
+
+\subsection{Distribuição dos Alunos}
+
+\IfFileExists{figuras/eda_evasao_perfil.png}{%
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.85\textwidth]{figuras/eda_evasao_perfil.png}
+\caption{Taxa de evasão por perfil sociodemográfico.}
+\label{fig:perfil}
+\end{figure}
+}{}
+
+\subsection{Distribuição dos Motivos de Evasão}
+
+\IfFileExists{figuras/eda_motivos_evasao.png}{%
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.65\textwidth]{figuras/eda_motivos_evasao.png}
+\caption{Motivos de evasão no PROEJA IFG Goiânia.}
+\label{fig:motivos}
+\end{figure}
+}{}
+
+\subsection{Matriz de Correlação}
+
+\IfFileExists{figuras/eda_matriz_correlacao.png}{%
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\textwidth]{figuras/eda_matriz_correlacao.png}
+\caption{Matriz de correlação dos fatores associados à evasão.}
+\label{fig:correlacao}
+\end{figure}
+}{}
+
+\subsection{Curva ROC do Modelo Preditivo}
+
+\IfFileExists{figuras/eda_curva_roc.png}{%
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.65\textwidth]{figuras/eda_curva_roc.png}
+\caption{Curva ROC do modelo de regressão logística para predição de evasão.}
+\label{fig:roc}
+\end{figure}
+}{}
+
+\subsection{Síntese dos Resultados}
+
+\begin{table}[h!]
+\centering
+\caption{Síntese dos resultados do EDA}
+\label{tab:resumo_eda}
+\begin{tabular}{p{5cm} p{8cm}}
+\toprule
+\textbf{Indicador} & \textbf{Resultado} \\
+\midrule
+Taxa de evasão geral & 36,4\% \\
+Principal motivo & Trabalho (40,1\%) \\
+Perfil de maior risco & Jovem (18-24), trabalha, com filhos, baixa renda, preto/pardo \\
+Janela crítica & 1º semestre (41\% das evasões) \\
+Curso com maior evasão & Cozinha (42,0\%) \\
+Fatores significativos ($p<0,05$) & Trabalho, Raça, Renda, Idade \\
+AUC-ROC do modelo & 0,712 \\
+\bottomrule
+\end{tabular}
+\fonte{Elaborado pelo autor (2026).}
+\end{table}
+
+\end{appendix}
+
+\end{document}

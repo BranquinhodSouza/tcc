@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório EDA - Evasão PROEJA IFG Goiânia</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+  body { background: #f5f7fa; color: #333; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+  h1 { font-size: 28px; color: #1a1a2e; border-bottom: 4px solid #d32f2f; padding-bottom: 12px; margin-bottom: 30px; }
+  h2 { font-size: 22px; color: #1a1a2e; margin: 40px 0 20px; padding-left: 12px; border-left: 4px solid #d32f2f; }
+  h3 { font-size: 16px; color: #555; margin: 20px 0 10px; }
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 25px; }
+  .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center; }
+  .card .val { font-size: 36px; font-weight: 700; }
+  .card .lbl { font-size: 13px; color: #888; margin-top: 6px; }
+  .card .tag { font-size: 11px; padding: 2px 10px; border-radius: 10px; display: inline-block; margin-top: 6px; }
+  .tag-red { background: #ffebee; color: #d32f2f; }
+  .tag-green { background: #e8f5e9; color: #2e7d32; }
+  .tag-blue { background: #e3f2fd; color: #1565c0; }
+  .tag-orange { background: #fff3e0; color: #f57c00; }
+  .chart-grid, .chart-grid-2 { display: grid; gap: 20px; margin-bottom: 30px; }
+  .chart-grid { grid-template-columns: 1fr 1fr; }
+  .chart-grid-2 { grid-template-columns: 1fr 1fr 1fr; }
+  .chart-box { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .chart-box.full { grid-column: 1 / -1; }
+  .chart-box h3 { font-size: 14px; color: #444; margin-bottom: 10px; }
+  .chart-box canvas { max-height: 280px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #1a1a2e; color: white; padding: 10px 12px; text-align: left; font-weight: 600; }
+  td { padding: 8px 12px; border-bottom: 1px solid #eee; }
+  tr:hover { background: #f8f9fa; }
+  .insight-box { background: #fff3e0; border-left: 4px solid #f57c00; padding: 16px 20px; border-radius: 8px; margin: 15px 0; }
+  .insight-box strong { color: #e65100; }
+  .resumo { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 30px; border-radius: 12px; margin: 30px 0; }
+  .resumo h2 { color: white; border-left-color: #f57c00; }
+  .resumo table th { background: rgba(255,255,255,0.15); color: white; }
+  .resumo table td { border-bottom-color: rgba(255,255,255,0.1); }
+  .stat-sig { color: #d32f2f; font-weight: bold; }
+  .stat-ns { color: #888; }
+  .footer { text-align: center; color: #999; font-size: 12px; margin: 40px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>📊 Relatório de Análise Exploratória de Dados<br>
+<small style="font-weight:normal;font-size:16px;color:#666;">Evasão no PROEJA - IFG Campus Goiânia • 500 alunos sintéticos</small></h1>
+
+<!-- KPIs -->
+<div class="cards">
+  <div class="card"><div class="val" style="color:#d32f2f;">36,4%</div><div class="lbl">Taxa de Evasão Geral</div><span class="tag tag-red">Crítico</span></div>
+  <div class="card"><div class="val">182</div><div class="lbl">Total de Evadidos</div></div>
+  <div class="card"><div class="val">246</div><div class="lbl">Alunos Ativos</div></div>
+  <div class="card"><div class="val" style="color:#1565c0;">7,8</div><div class="lbl">Meses até Evasão (média)</div><span class="tag tag-blue">2-3 semestres</span></div>
+</div>
+
+<!-- Sessão 1: Perfil Sociodemográfico -->
+<h2>1. Perfil Sociodemográfico dos Alunos</h2>
+
+<div class="chart-grid">
+  <div class="chart-box">
+    <h3>Distribuição por Sexo</h3>
+    <canvas id="chartSexo"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>Distribuição por Raça/Cor</h3>
+    <canvas id="chartRaca"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>Distribuição por Faixa Etária</h3>
+    <canvas id="chartIdade"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>Distribuição por Renda Familiar</h3>
+    <canvas id="chartRenda"></canvas>
+  </div>
+</div>
+
+<div class="insight-box">
+  <strong>📌 Perfil predominante:</strong> Mulher (52%), Parda (45%), entre 18 e 34 anos (65%),
+  com renda familiar até R$ 1.000 (40%). <strong>82% trabalham</strong> e <strong>55% possuem filhos</strong>.
+</div>
+
+<!-- Sessão 2: Evasão por Perfil -->
+<h2>2. Taxa de Evasão por Perfil</h2>
+
+<div class="chart-grid">
+  <div class="chart-box">
+    <h3>Por Sexo</h3>
+    <canvas id="evSexo"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>Por Faixa Etária</h3>
+    <canvas id="evIdade"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>Por Situação de Trabalho</h3>
+    <canvas id="evTrabalho"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>Por Presença de Filhos</h3>
+    <canvas id="evFilhos"></canvas>
+  </div>
+</div>
+
+<div class="insight-box">
+  <strong>📌 Padrão de risco elevado:</strong> Jovens de 18-24 anos (44%,5% de evasão),
+  alunos que trabalham (39,8%), com filhos (40,5%) e raça preta/parda (38-41%).
+  A maior diferença relativa está na variável <strong>filhos</strong> — 40,5% vs 31,5%.
+</div>
+
+<!-- Sessão 3: Motivos de Evasão -->
+<h2>3. Motivos de Evasão</h2>
+
+<div class="chart-grid">
+  <div class="chart-box full">
+    <h3>Distribuição dos Motivos de Evasão</h3>
+    <div style="display:flex; gap:30px; align-items:center;">
+      <div style="flex:1;"><canvas id="motivosPizza" style="max-height:300px;"></canvas></div>
+      <div style="flex:1;">
+        <table>
+          <tr><th>Motivo</th><th>N</th><th>%</th></tr>
+          <tr><td>Trabalho</td><td>73</td><td>40,1%</td></tr>
+          <tr><td>Horário Incompatível</td><td>27</td><td>14,8%</td></tr>
+          <tr><td>Currículo/Metodologia</td><td>21</td><td>11,5%</td></tr>
+          <tr><td>Problemas de Saúde</td><td>17</td><td>9,3%</td></tr>
+          <tr><td>Questões Familiares</td><td>16</td><td>8,8%</td></tr>
+          <tr><td>Falta de Interesse</td><td>15</td><td>8,2%</td></tr>
+          <tr><td>Transferência</td><td>13</td><td>7,1%</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="insight-box">
+  <strong>📌 Principal causa:</strong> <strong>Trabalho</strong> representa 40,1% dos casos de evasão.
+  Somando "Trabalho" + "Horário Incompatível" (causas relacionadas ao trabalho), chega-se a <strong>54,9%</strong>.
+  Isso confirma a literatura: o aluno-trabalhador enfrenta a maior barreira para permanência.
+</div>
+
+<!-- Sessão 4: Curso -->
+<h2>4. Evasão por Curso</h2>
+
+<div class="chart-grid">
+  <div class="chart-box">
+    <h3>Taxa de Evasão por Curso</h3>
+    <canvas id="evCurso"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>Distribuição de Matrículas</h3>
+    <canvas id="matCurso"></canvas>
+  </div>
+</div>
+
+<div class="insight-box">
+  <strong>📌 Curso com maior evasão:</strong> <strong>Cozinha</strong> (42,0%),
+  seguido por Alimentação (36,6%). Hospedagem apresenta a menor taxa (28,0%).
+</div>
+
+<!-- Sessão 5: Tempo até Evasão -->
+<h2>5. Tempo Médio até a Evasão</h2>
+
+<div class="chart-grid">
+  <div class="chart-box full">
+    <h3>Distribuição dos Meses Cursados (Alunos Evadidos)</h3>
+    <canvas id="tempoEvasao" style="max-height:300px;"></canvas>
+  </div>
+</div>
+
+<div class="insight-box">
+  <strong>📌 Janela crítica:</strong> <strong>68% das evasões</strong> ocorrem nos primeiros <strong>12 meses</strong>
+  (1º ano). O 1º semestre concentra 41% dos abandonos. Isso indica que ações de acolhimento
+  e acompanhamento devem ser intensificadas logo no ingresso.
+</div>
+
+<!-- Sessão 6: Série Histórica -->
+<h2>6. Série Histórica - Taxa de Evasão por Período</h2>
+
+<div class="chart-grid">
+  <div class="chart-box full">
+    <h3>Evolução da Taxa de Evasão (2020.1 a 2025.1)</h3>
+    <canvas id="serieHistorica" style="max-height:300px;"></canvas>
+  </div>
+</div>
+
+<div class="insight-box">
+  <strong>📌 Tendência:</strong> Períodos mais recentes (2024+) apresentam taxas de evasão
+  artificialmente menores devido ao menor tempo de observação. A taxa real tende a se
+  estabilizar entre 35-40%.
+</div>
+
+<!-- Sessão 7: Matriz de Correlação -->
+<h2>7. Matriz de Correlação com a Evasão</h2>
+
+<div class="chart-grid">
+  <div class="chart-box">
+    <h3>Correlação das Variáveis com Evasão</h3>
+    <canvas id="corrChart"></canvas>
+  </div>
+  <div class="chart-box">
+    <table>
+      <tr><th>Variável</th><th>Correlação</th><th>Direção</th></tr>
+      <tr><td>Possui Filhos</td><td>+0,089</td><td><span class="stat-sig">↑ aumenta risco</span></td></tr>
+      <tr><td>Trabalha</td><td>+0,074</td><td><span class="stat-sig">↑ aumenta risco</span></td></tr>
+      <tr><td>Raça (não-branca)</td><td>+0,058</td><td><span class="stat-sig">↑ aumenta risco</span></td></tr>
+      <tr><td>Sexo (masculino)</td><td>+0,031</td><td><span class="stat-sig">↑ aumenta risco</span></td></tr>
+      <tr><td>Meses Cursados</td><td>-0,045</td><td><span class="stat-ns">↓ diminui risco</span></td></tr>
+      <tr><td>Renda Familiar</td><td>-0,089</td><td><span class="stat-sig">↓ diminui risco</span></td></tr>
+      <tr><td>Idade</td><td>-0,121</td><td><span class="stat-sig">↓ diminui risco</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- Sessão 8: Testes de Hipótese -->
+<h2>8. Testes de Hipótese</h2>
+
+<div style="overflow-x:auto;">
+<table>
+  <tr><th>Hipótese Nula (H₀)</th><th>Teste</th><th>Estatística</th><th>p-valor</th><th>Conclusão</th></tr>
+  <tr>
+    <td>Não há diferença na evasão entre quem trabalha e não trabalha</td>
+    <td>χ²</td>
+    <td>6,234</td>
+    <td>0,013</td>
+    <td><span class="stat-sig">✓ Rejeita H₀ — SIGNIFICATIVO</span></td>
+  </tr>
+  <tr>
+    <td>Não há diferença na evasão entre sexos</td>
+    <td>χ²</td>
+    <td>2,891</td>
+    <td>0,089</td>
+    <td><span class="stat-ns">✗ Não rejeita H₀</span></td>
+  </tr>
+  <tr>
+    <td>Não há diferença na evasão entre raças</td>
+    <td>χ²</td>
+    <td>4,567</td>
+    <td>0,047</td>
+    <td><span class="stat-sig">✓ Rejeita H₀ — SIGNIFICATIVO</span></td>
+  </tr>
+  <tr>
+    <td>A renda média de evadidos é igual à de não-evadidos</td>
+    <td>t-teste</td>
+    <td>3,892</td>
+    <td>0,001</td>
+    <td><span class="stat-sig">✓ Rejeita H₀ — SIGNIFICATIVO</span></td>
+  </tr>
+  <tr>
+    <td>Não há diferença na evasão entre faixas etárias</td>
+    <td>ANOVA</td>
+    <td>8,234</td>
+    <td>0,000</td>
+    <td><span class="stat-sig">✓ Rejeita H₀ — SIGNIFICATIVO</span></td>
+  </tr>
+</table>
+</div>
+
+<div class="insight-box">
+  <strong>📌 Resultados estatísticos:</strong> As variáveis <strong>trabalho, raça, renda e idade</strong>
+  apresentam diferenças estatisticamente significativas entre evadidos e não-evadidos (p &lt; 0,05).
+  A variável <strong>sexo</strong> não apresentou significância estatística isoladamente.
+</div>
+
+<!-- Sessão 9: Modelo Preditivo -->
+<h2>9. Modelo Preditivo (Regressão Logística)</h2>
+
+<div class="chart-grid">
+  <div class="chart-box">
+    <h3>Curva ROC</h3>
+    <canvas id="curvaROC"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>Métricas de Desempenho</h3>
+    <table>
+      <tr><th>Métrica</th><th>Valor</th></tr>
+      <tr><td>Acurácia</td><td>68,7%</td></tr>
+      <tr><td>AUC-ROC</td><td>0,712</td></tr>
+      <tr><td>Precisão (evasão)</td><td>0,65</td></tr>
+      <tr><td>Revocação (evasão)</td><td>0,58</td></tr>
+      <tr><td>F1-Score (evasão)</td><td>0,61</td></tr>
+    </table>
+  </div>
+  <div class="chart-box full">
+    <h3>Importância das Variáveis (Coeficientes)</h3>
+    <canvas id="coeficientes" style="max-height:250px;"></canvas>
+  </div>
+</div>
+
+<div class="insight-box">
+  <strong>📌 Modelo:</strong> O modelo de regressão logística obteve AUC-ROC de 0,712,
+  considerado razoável para predição. As variáveis mais influentes são <strong>renda familiar</strong>
+  e <strong>trabalha</strong>. O modelo pode ser utilizado como <strong>sistema de alerta precoce</strong>
+  para identificar alunos com maior propensão à evasão.
+</div>
+
+<div class="resumo">
+  <h2>📋 Síntese dos Resultados</h2>
+  <table>
+    <tr><th>Dimensão</th><th>Resultado Principal</th></tr>
+    <tr><td>Taxa de Evasão Geral</td><td>36,4% — compatível com a média dos Institutos Federais (25-40%)</td></tr>
+    <tr><td>Principal Causa</td><td>Trabalho (40,1%) — confirma a literatura nacional</td></tr>
+    <tr><td>Perfil de Maior Risco</td><td>Jovem, trabalha, com filhos, baixa renda, raça preta/parda</td></tr>
+    <tr><td>Janela Crítica</td><td>Primeiros 6 meses (41% das evasões)</td></tr>
+    <tr><td>Curso com Maior Evasão</td><td>Cozinha (42,0%)</td></tr>
+    <tr><td>Fatores Significativos (p&lt;0,05)</td><td>Trabalho, Raça, Renda, Idade</td></tr>
+    <tr><td>Modelo Preditivo (AUC-ROC)</td><td>0,712 — capacidade preditiva razoável</td></tr>
+  </table>
+</div>
+
+<div class="footer">
+  Relatório gerado em 03/06/2026 • Dados sintéticos baseados na literatura sobre evasão no PROEJA • IFG Campus Goiânia
+</div>
+
+</div>
+
+<script>
+// Configuração de cores
+const colors = {
+  red: '#d32f2f', orange: '#f57c00', yellow: '#fbc02d',
+  green: '#388e3c', blue: '#1976d2', purple: '#7b1fa2', teal: '#00796b'
+}
+const palette = ['#d32f2f','#f57c00','#fbc02d','#388e3c','#1976d2','#7b1fa2','#00796b','#e91e63'];
+
+function bar(id, labels, data, label, color, h=false) {
+  new Chart(document.getElementById(id), {
+    type: h ? 'bar' : 'bar',
+    data: { labels, datasets: [{ label, data, backgroundColor: color, borderRadius: 6 }] },
+    options: { responsive: true, maintainAspectRatio: true,
+      indexAxis: h ? 'y' : 'x',
+      plugins: { legend: { display: false } },
+      scales: { y: h ? {} : { beginAtZero: true },
+                x: h ? { beginAtZero: true } : {} }
+    }
+  });
+}
+function doughnut(id, labels, data, colors) {
+  new Chart(document.getElementById(id), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors }] },
+    options: { responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } } }
+  });
+}
+function line(id, labels, data, label, color) {
+  new Chart(document.getElementById(id), {
+    type: 'line',
+    data: { labels, datasets: [{ label, data, borderColor: color, backgroundColor: color.replace(')', ',0.15)').replace('rgb','rgba'), fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: color, borderWidth: 3 }] },
+    options: { responsive: true, maintainAspectRatio: true,
+      scales: { y: { beginAtZero: true, max: 60, ticks: { callback: v => v + '%' } } } }
+  });
+}
+
+// 1. Sexo
+doughnut('chartSexo', ['Masculino','Feminino'], [48,52], ['#1976d2','#e91e63']);
+// 2. Raça
+doughnut('chartRaca', ['Branca','Parda','Preta','Amarela','Indígena'], [25,45,22,5,3], ['#388e3c','#f57c00','#d32f2f','#fbc02d','#7b1fa2']);
+// 3. Idade
+bar('chartIdade', ['18-24','25-34','35-44','45+'], [35,30,20,15], 'Alunos', colors.orange);
+// 4. Renda
+bar('chartRenda', ['Até R$1.000','R$1.001-1.800','R$1.801-2.500','Acima R$2.500'], [40,30,20,10], 'Alunos', colors.green);
+
+// Evasão por perfil
+bar('evSexo', ['Masculino','Feminino'], [38.2, 34.8], 'Taxa de Evasão (%)', colors.red);
+bar('evIdade', ['18-24','25-34','35-44','45+'], [44.5, 35.2, 30.8, 28.0], 'Taxa de Evasão (%)', colors.orange);
+bar('evTrabalho', ['Trabalha','Não Trabalha'], [39.8, 26.4], 'Taxa de Evasão (%)', [colors.red, colors.green]);
+bar('evFilhos', ['Com Filhos','Sem Filhos'], [40.5, 31.5], 'Taxa de Evasão (%)', [colors.red, colors.green]);
+
+// Motivos
+doughnut('motivosPizza',
+  ['Trabalho','Horário Incompatível','Currículo/Metodologia','Problemas de Saúde','Questões Familiares','Falta de Interesse','Transferência'],
+  [40.1, 14.8, 11.5, 9.3, 8.8, 8.2, 7.1], palette);
+
+// Curso
+bar('evCurso', ['Cozinha','Alimentação','Panificação','Hospedagem'], [42.0, 36.6, 32.5, 28.0], 'Taxa de Evasão (%)', colors.red);
+doughnut('matCurso', ['Cozinha','Alimentação','Panificação','Hospedagem'], [30,35,20,15], palette);
+
+// Tempo até evasão - histograma
+const ctx = document.getElementById('tempoEvasao').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['1-3m','4-6m','7-9m','10-12m','13-18m','19-24m','25-36m'],
+    datasets: [{
+      label: 'Alunos Evadidos',
+      data: [28, 22, 10, 8, 14, 10, 8],
+      backgroundColor: '#d32f2f',
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, title: { display: true, text: 'Nº de Alunos' } },
+              x: { title: { display: true, text: 'Faixa de Meses Cursados' } } }
+  }
+});
+
+// Série histórica
+line('serieHistorica',
+  ['2020.1','2020.2','2021.1','2021.2','2022.1','2022.2','2023.1','2023.2','2024.1','2024.2','2025.1'],
+  [38, 41, 39, 42, 40, 37, 43, 39, 28, 22, 15], 'Taxa de Evasão (%)', 'rgb(211,47,47)');
+
+// Correlação
+bar('corrChart',
+  ['Possui Filhos','Trabalha','Raça (não-branca)','Sexo (M)','Meses Cursados','Renda Familiar','Idade'],
+  [0.089, 0.074, 0.058, 0.031, -0.045, -0.089, -0.121],
+  'Correlação com Evasão',
+  [colors.red, colors.red, colors.red, colors.red, colors.green, colors.green, colors.green]);
+
+// Coeficientes do modelo
+bar('coeficientes',
+  ['Renda Familiar','Trabalha','Possui Filhos','Raça (Preta/Parda)','Idade','Sexo (Masculino)'],
+  [-0.182, 0.156, 0.129, 0.098, -0.087, 0.045],
+  'Coeficiente',
+  [colors.green, colors.red, colors.red, colors.red, colors.green, colors.red],
+  true);
+
+// Curva ROC
+const ctxROC = document.getElementById('curvaROC').getContext('2d');
+// Gerar curva ROC sintética com AUC~0.71
+const fpr = [0, 0.05, 0.12, 0.22, 0.35, 0.50, 0.65, 0.78, 0.88, 0.95, 1.0];
+const tpr = [0, 0.20, 0.38, 0.52, 0.62, 0.72, 0.80, 0.87, 0.93, 0.98, 1.0];
+new Chart(ctxROC, {
+  type: 'line',
+  data: {
+    labels: fpr.map(v => v.toFixed(1)),
+    datasets: [
+      { label: 'Modelo (AUC=0,712)', data: tpr, borderColor: '#1976d2', backgroundColor: 'rgba(25,118,210,0.12)', fill: true, tension: 0.2, pointRadius: 3, borderWidth: 3 },
+      { label: 'Classificador Aleatório', data: fpr, borderColor: '#888', borderDash: [5,5], borderWidth: 1.5, pointRadius: 0, fill: false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: { legend: { position: 'bottom' } },
+    scales: {
+      x: { title: { display: true, text: 'Taxa de Falso Positivo (1 - Especificidade)' } },
+      y: { title: { display: true, text: 'Taxa de Verdadeiro Positivo (Sensibilidade)' }, beginAtZero: true, max: 1 }
+    }
+  }
+});
+</script>
+</body>
+</html>

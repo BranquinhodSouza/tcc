@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard de Evasão — PROEJA IFG Goiânia</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    body { background: #f0f2f5; padding: 20px; }
+    .container { max-width: 1400px; margin: 0 auto; }
+    h1 { font-size: 24px; color: #1a1a2e; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    h1 small { font-size: 14px; font-weight: normal; color: #666; }
+    .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .filters select, .filters button {
+      padding: 8px 16px; border: 1px solid #ddd; border-radius: 6px;
+      background: white; font-size: 14px; cursor: pointer;
+    }
+    .filters button { background: #1a1a2e; color: white; border: none; }
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+    .card {
+      background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+    .card .value { font-size: 32px; font-weight: 700; color: #1a1a2e; }
+    .card .label { font-size: 13px; color: #888; margin-top: 4px; }
+    .card .badge { font-size: 12px; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 6px; }
+    .badge.red { background: #fee; color: #d32f2f; }
+    .badge.green { background: #efe; color: #2e7d32; }
+    .badge.blue { background: #eef; color: #1565c0; }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .chart-box {
+      background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .chart-box h3 { font-size: 15px; color: #333; margin-bottom: 12px; }
+    .chart-box canvas { max-height: 280px; }
+    .full-width { grid-column: 1 / -1; }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 13px;
+    }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f8f9fa; color: #555; font-weight: 600; }
+    .risk-high { color: #d32f2f; font-weight: 600; }
+    .risk-med { color: #f57c00; font-weight: 600; }
+    .risk-low { color: #388e3c; font-weight: 600; }
+    .status-ativo { background: #e8f5e9; color: #2e7d32; padding: 2px 10px; border-radius: 10px; font-size: 12px; }
+    .status-evadido { background: #ffebee; color: #d32f2f; padding: 2px 10px; border-radius: 10px; font-size: 12px; }
+    .status-formado { background: #e3f2fd; color: #1565c0; padding: 2px 10px; border-radius: 10px; font-size: 12px; }
+    .footer { text-align: center; margin-top: 20px; color: #999; font-size: 12px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>
+    📊 Dashboard de Evasão — PROEJA IFG Goiânia
+    <small>Análise de dados de 50 alunos</small>
+  </h1>
+
+  <div class="filters">
+    <select id="filterCurso"><option value="todos">Todos os Cursos</option></select>
+    <select id="filterSemestre"><option value="todos">Todos os Períodos</option></select>
+    <select id="filterSexo"><option value="todos">Ambos os Sexos</option><option value="M">Masculino</option><option value="F">Feminino</option></select>
+    <select id="filterTrabalha"><option value="todos">Trabalha? (Todos)</option><option value="Sim">Sim</option><option value="Não">Não</option></select>
+    <button onclick="updateDashboard()">Aplicar Filtros</button>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="value" id="kpiEvasao">32,0%</div><div class="label">Taxa de Evasão Geral</div><span class="badge red">Alta</span></div>
+    <div class="card"><div class="value" id="kpiEvadidos">16</div><div class="label">Total de Evadidos</div></div>
+    <div class="card"><div class="value" id="kpiAtivos">30</div><div class="label">Alunos Ativos</div></div>
+    <div class="card"><div class="value" id="kpiTempoMedio">7,5</div><div class="label">Meses até Evasão (média)</div><span class="badge blue">2-3 semestres</span></div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-box"><h3>Evasão por Curso</h3><canvas id="chartCurso"></canvas></div>
+    <div class="chart-box"><h3>Motivos de Evasão</h3><canvas id="chartMotivos"></canvas></div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-box"><h3>Evasão por Faixa Etária</h3><canvas id="chartIdade"></canvas></div>
+    <div class="chart-box"><h3>Evasão por Sexo e Trabalho</h3><canvas id="chartSexoTrab"></canvas></div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-box full-width"><h3>Série Histórica — Taxa de Evasão por Semestre</h3><canvas id="chartSerieHist"></canvas></div>
+  </div>
+
+  <div class="chart-box">
+    <h3>Alunos em Risco de Evasão (Alerta Precoce)</h3>
+    <table>
+      <thead><tr><th>Nome</th><th>Curso</th><th>Idade</th><th>Trabalha</th><th>Filhos</th><th>Meses Cursados</th><th>Status</th><th>Risco</th></tr></thead>
+      <tbody id="tabelaRisco"></tbody>
+    </table>
+  </div>
+
+  <div class="footer">Dados sintéticos para demonstração | PROEJA IFG Campus Goiânia</div>
+</div>
+
+<script>
+const alunos = [
+  {id:1,nome:"João Silva",idade:24,sexo:"M",raca:"Pardo",renda:1200,trabalha:"Sim",bairro:"Leste",filhos:"Não",curso:"Cozinha",ingresso:"2022.1",meses:6,status:"Evadido",motivo:"Trabalho"},
+  {id:2,nome:"Maria Santos",idade:31,sexo:"F",raca:"Preta",renda:900,trabalha:"Sim",bairro:"Norte",filhos:"Sim",curso:"Alimentação",ingresso:"2022.1",meses:48,status:"Ativo",motivo:""},
+  {id:3,nome:"Carlos Pereira",idade:19,sexo:"M",raca:"Branco",renda:1500,trabalha:"Não",bairro:"Sul",filhos:"Não",curso:"Cozinha",ingresso:"2023.1",meses:3,status:"Evadido",motivo:"Desinteresse"},
+  {id:4,nome:"Ana Oliveira",idade:45,sexo:"F",raca:"Parda",renda:1100,trabalha:"Sim",bairro:"Oeste",filhos:"Sim",curso:"Alimentação",ingresso:"2022.2",meses:6,status:"Evadido",motivo:"Trabalho"},
+  {id:5,nome:"Paulo Lima",idade:28,sexo:"M",raca:"Preto",renda:850,trabalha:"Sim",bairro:"Centro",filhos:"Não",curso:"Cozinha",ingresso:"2023.1",meses:12,status:"Evadido",motivo:"Currículo"},
+  {id:6,nome:"Lúcia Costa",idade:36,sexo:"F",raca:"Branco",renda:2000,trabalha:"Sim",bairro:"Norte",filhos:"Sim",curso:"Alimentação",ingresso:"2022.1",meses:48,status:"Ativo",motivo:""},
+  {id:7,nome:"Rafael Souza",idade:22,sexo:"M",raca:"Pardo",renda:1300,trabalha:"Sim",bairro:"Leste",filhos:"Não",curso:"Cozinha",ingresso:"2023.2",meses:3,status:"Evadido",motivo:"Trabalho"},
+  {id:8,nome:"Juliana Rocha",idade:29,sexo:"F",raca:"Preta",renda:950,trabalha:"Sim",bairro:"Sul",filhos:"Sim",curso:"Alimentação",ingresso:"2023.1",meses:6,status:"Evadido",motivo:"Pessoal/Família"},
+  {id:9,nome:"Fernando Alves",idade:41,sexo:"M",raca:"Branco",renda:1800,trabalha:"Sim",bairro:"Centro",filhos:"Não",curso:"Cozinha",ingresso:"2022.2",meses:36,status:"Formado",motivo:""},
+  {id:10,nome:"Patrícia Gomes",idade:33,sexo:"F",raca:"Parda",renda:1000,trabalha:"Sim",bairro:"Norte",filhos:"Sim",curso:"Alimentação",ingresso:"2022.1",meses:6,status:"Evadido",motivo:"Trabalho"},
+  {id:11,nome:"Lucas Martins",idade:20,sexo:"M",raca:"Preto",renda:700,trabalha:"Não",bairro:"Leste",filhos:"Não",curso:"Cozinha",ingresso:"2024.1",meses:3,status:"Evadido",motivo:"Pessoal/Família"},
+  {id:12,nome:"Amanda Ribeiro",idade:27,sexo:"F",raca:"Branco",renda:1600,trabalha:"Sim",bairro:"Oeste",filhos:"Não",curso:"Alimentação",ingresso:"2023.1",meses:30,status:"Ativo",motivo:""},
+  {id:13,nome:"Diego Santos",idade:38,sexo:"M",raca:"Pardo",renda:1400,trabalha:"Sim",bairro:"Centro",filhos:"Sim",curso:"Cozinha",ingresso:"2022.1",meses:18,status:"Evadido",motivo:"Trabalho"},
+  {id:14,nome:"Larissa Lima",idade:30,sexo:"F",raca:"Preta",renda:880,trabalha:"Sim",bairro:"Norte",filhos:"Sim",curso:"Alimentação",ingresso:"2023.2",meses:6,status:"Evadido",motivo:"Trabalho"},
+  {id:15,nome:"Rodrigo Costa",idade:23,sexo:"M",raca:"Branco",renda:2100,trabalha:"Sim",bairro:"Leste",filhos:"Não",curso:"Cozinha",ingresso:"2022.2",meses:6,status:"Evadido",motivo:"Currículo"},
+  {id:16,nome:"Michele Souza",idade:42,sexo:"F",raca:"Parda",renda:950,trabalha:"Sim",bairro:"Sul",filhos:"Sim",curso:"Alimentação",ingresso:"2022.1",meses:42,status:"Ativo",motivo:""},
+  {id:17,nome:"Eduardo Pereira",idade:26,sexo:"M",raca:"Preto",renda:780,trabalha:"Sim",bairro:"Centro",filhos:"Não",curso:"Cozinha",ingresso:"2024.1",meses:3,status:"Evadido",motivo:"Trabalho"},
+  {id:18,nome:"Camila Oliveira",idade:34,sexo:"F",raca:"Branco",renda:1900,trabalha:"Não",bairro:"Oeste",filhos:"Sim",curso:"Alimentação",ingresso:"2023.2",meses:24,status:"Ativo",motivo:""},
+  {id:19,nome:"Gustavo Santos",idade:21,sexo:"M",raca:"Pardo",renda:1100,trabalha:"Sim",bairro:"Norte",filhos:"Não",curso:"Cozinha",ingresso:"2023.1",meses:3,status:"Evadido",motivo:"Trabalho"},
+  {id:20,nome:"Vanessa Lima",idade:39,sexo:"F",raca:"Preta",renda:920,trabalha:"Sim",bairro:"Leste",filhos:"Sim",curso:"Alimentação",ingresso:"2022.2",meses:6,status:"Evadido",motivo:"Pessoal/Família"},
+  {id:21,nome:"Thiago Rocha",idade:25,sexo:"M",raca:"Branco",renda:1350,trabalha:"Sim",bairro:"Centro",filhos:"Não",curso:"Cozinha",ingresso:"2023.2",meses:24,status:"Ativo",motivo:""},
+  {id:22,nome:"Andréia Costa",idade:37,sexo:"F",raca:"Parda",renda:870,trabalha:"Sim",bairro:"Sul",filhos:"Sim",curso:"Alimentação",ingresso:"2022.1",meses:6,status:"Evadido",motivo:"Trabalho"},
+  {id:23,nome:"Leonardo Silva",idade:44,sexo:"M",raca:"Preto",renda:1050,trabalha:"Sim",bairro:"Norte",filhos:"Não",curso:"Cozinha",ingresso:"2023.1",meses:6,status:"Evadido",motivo:"Currículo"},
+  {id:24,nome:"Juliana Santos",idade:28,sexo:"F",raca:"Branco",renda:1700,trabalha:"Sim",bairro:"Oeste",filhos:"Sim",curso:"Alimentação",ingresso:"2024.1",meses:12,status:"Ativo",motivo:""},
+  {id:25,nome:"Fábio Pereira",idade:35,sexo:"M",raca:"Pardo",renda:1250,trabalha:"Sim",bairro:"Leste",filhos:"Não",curso:"Cozinha",ingresso:"2022.2",meses:36,status:"Formado",motivo:""},
+  {id:26,nome:"Tatiane Lima",idade:43,sexo:"F",raca:"Preta",renda:800,trabalha:"Sim",bairro:"Centro",filhos:"Sim",curso:"Alimentação",ingresso:"2023.1",meses:6,status:"Evadido",motivo:"Trabalho"},
+  {id:27,nome:"Marcos Souza",idade:32,sexo:"M",raca:"Branco",renda:1500,trabalha:"Sim",bairro:"Norte",filhos:"Não",curso:"Cozinha",ingresso:"2022.1",meses:12,status:"Evadido",motivo:"Trabalho"},
+  {id:28,nome:"Renata Oliveira",idade:29,sexo:"F",raca:"Parda",renda:980,trabalha:"Sim",bairro:"Sul",filhos:"Sim",curso:"Alimentação",ingresso:"2022.2",meses:30,status:"Ativo",motivo:""},
+  {id:29,nome:"Gabriel Santos",idade:47,sexo:"M",raca:"Preto",renda:730,trabalha:"Sim",bairro:"Leste",filhos:"Não",curso:"Cozinha",ingresso:"2024.1",meses:3,status:"Evadido",motivo:"Trabalho"},
+  {id:30,nome:"Eliane Costa",idade:41,sexo:"F",raca:"Branco",renda:1400,trabalha:"Sim",bairro:"Oeste",filhos:"Sim",curso:"Alimentação",ingresso:"2023.1",meses:12,status:"Evadido",motivo:"Pessoal/Família"},
+  {id:31,nome:"Vinicius Lima",idade:36,sexo:"M",raca:"Pardo",renda:1200,trabalha:"Sim",bairro:"Centro",filhos:"Não",curso:"Cozinha",ingresso:"2023.2",meses:18,status:"Ativo",motivo:""},
+  {id:32,nome:"Priscila Rocha",idade:27,sexo:"F",raca:"Preta",renda:850,trabalha:"Sim",bairro:"Norte",filhos:"Sim",curso:"Alimentação",ingresso:"2022.2",meses:6,status:"Evadido",motivo:"Trabalho"},
+  {id:33,nome:"Alexandre Silva",idade:20,sexo:"M",raca:"Branco",renda:2000,trabalha:"Não",bairro:"Leste",filhos:"Não",curso:"Cozinha",ingresso:"2023.1",meses:3,status:"Evadido",motivo:"Desinteresse"},
+  {id:34,nome:"Simone Costa",idade:48,sexo:"F",raca:"Parda",renda:1100,trabalha:"Sim",bairro:"Centro",filhos:"Sim",curso:"Alimentação",ingresso:"2022.1",meses:36,status:"Formado",motivo:""},
+  {id:35,nome:"Daniel Pereira",idade:39,sexo:"M",raca:"Preto",renda:900,trabalha:"Sim",bairro:"Sul",filhos:"Não",curso:"Cozinha",ingresso:"2024.1",meses:12,status:"Ativo",motivo:""},
+  {id:36,nome:"Luciana Santos",idade:35,sexo:"F",raca:"Branco",renda:1600,trabalha:"Sim",bairro:"Oeste",filhos:"Sim",curso:"Alimentação",ingresso:"2022.2",meses:6,status:"Evadido",motivo:"Trabalho"},
+  {id:37,nome:"Hugo Lima",idade:30,sexo:"M",raca:"Pardo",renda:1300,trabalha:"Sim",bairro:"Norte",filhos:"Não",curso:"Cozinha",ingresso:"2023.1",meses:12,status:"Evadido",motivo:"Currículo"},
+  {id:38,nome:"Viviane Souza",idade:44,sexo:"F",raca:"Preta",renda:780,trabalha:"Sim",bairro:"Leste",filhos:"Sim",curso:"Alimentação",ingresso:"2022.1",meses:6,status:"Evadido",motivo:"Trabalho"},
+  {id:39,nome:"William Costa",idade:48,sexo:"M",raca:"Branco",renda:1500,trabalha:"Sim",bairro:"Centro",filhos:"Não",curso:"Cozinha",ingresso:"2023.2",meses:18,status:"Ativo",motivo:""},
+  {id:40,nome:"Débora Oliveira",idade:32,sexo:"F",raca:"Parda",renda:950,trabalha:"Sim",bairro:"Sul",filhos:"Sim",curso:"Alimentação",ingresso:"2024.1",meses:12,status:"Ativo",motivo:""},
+  {id:41,nome:"Mateus Santos",idade:19,sexo:"M",raca:"Preto",renda:680,trabalha:"Não",bairro:"Norte",filhos:"Não",curso:"Cozinha",ingresso:"2023.1",meses:6,status:"Evadido",motivo:"Desinteresse"},
+  {id:42,nome:"Fernanda Rocha",idade:26,sexo:"F",raca:"Branco",renda:1700,trabalha:"Sim",bairro:"Oeste",filhos:"Não",curso:"Alimentação",ingresso:"2022.2",meses:3,status:"Evadido",motivo:"Trabalho"},
+  {id:43,nome:"Jorge Silva",idade:40,sexo:"M",raca:"Pardo",renda:1200,trabalha:"Sim",bairro:"Centro",filhos:"Sim",curso:"Cozinha",ingresso:"2022.1",meses:18,status:"Evadido",motivo:"Trabalho"},
+  {id:44,nome:"Aline Costa",idade:37,sexo:"F",raca:"Preta",renda:900,trabalha:"Sim",bairro:"Leste",filhos:"Sim",curso:"Alimentação",ingresso:"2023.1",meses:24,status:"Ativo",motivo:""},
+  {id:45,nome:"Igor Lima",idade:33,sexo:"M",raca:"Branco",renda:1450,trabalha:"Sim",bairro:"Norte",filhos:"Não",curso:"Cozinha",ingresso:"2023.2",meses:6,status:"Evadido",motivo:"Trabalho"},
+  {id:46,nome:"Rosângela Santos",idade:46,sexo:"F",raca:"Parda",renda:850,trabalha:"Sim",bairro:"Sul",filhos:"Sim",curso:"Alimentação",ingresso:"2022.2",meses:36,status:"Formado",motivo:""},
+  {id:47,nome:"Felipe Almeida",idade:24,sexo:"M",raca:"Preto",renda:1050,trabalha:"Sim",bairro:"Centro",filhos:"Não",curso:"Cozinha",ingresso:"2023.1",meses:3,status:"Evadido",motivo:"Trabalho"},
+  {id:48,nome:"Cristiane Oliveira",idade:38,sexo:"F",raca:"Branco",renda:1350,trabalha:"Sim",bairro:"Oeste",filhos:"Sim",curso:"Alimentação",ingresso:"2023.2",meses:18,status:"Ativo",motivo:""},
+  {id:49,nome:"Francisco Souza",idade:28,sexo:"M",raca:"Pardo",renda:1150,trabalha:"Sim",bairro:"Norte",filhos:"Não",curso:"Cozinha",ingresso:"2022.1",meses:24,status:"Evadido",motivo:"Currículo"},
+  {id:50,nome:"Adriana Lima",idade:42,sexo:"F",raca:"Preta",renda:820,trabalha:"Sim",bairro:"Leste",filhos:"Sim",curso:"Alimentação",ingresso:"2024.1",meses:12,status:"Ativo",motivo:""}
+];
+
+function calcRisco(a) {
+  if (a.status !== "Ativo") return "";
+  let score = 0;
+  if (a.trabalha === "Sim") score += 2;
+  if (a.filhos === "Sim") score += 2;
+  if (a.renda < 1000) score += 2;
+  if (a.idade < 25) score += 1;
+  if (a.meses <= 6) score += 2;
+  else if (a.meses <= 12) score += 1;
+  if (score >= 5) return "🔴 Alto";
+  if (score >= 3) return "🟡 Médio";
+  return "🟢 Baixo";
+}
+
+function getCourses(data) { return [...new Set(data.map(a => a.curso))]; }
+function getSemesters(data) { return [...new Set(data.map(a => a.ingresso))].sort(); }
+
+function filterData() {
+  let data = [...alunos];
+  const c = document.getElementById('filterCurso').value;
+  const s = document.getElementById('filterSemestre').value;
+  const sx = document.getElementById('filterSexo').value;
+  const tr = document.getElementById('filterTrabalha').value;
+  if (c !== 'todos') data = data.filter(a => a.curso === c);
+  if (s !== 'todos') data = data.filter(a => a.ingresso === s);
+  if (sx !== 'todos') data = data.filter(a => a.sexo === sx);
+  if (tr !== 'todos') data = data.filter(a => a.trabalha === tr);
+  return data;
+}
+
+function updateDashboard() {
+  const data = filterData();
+  const total = data.length;
+  const evadidos = data.filter(a => a.status === 'Evadido');
+  const ativos = data.filter(a => a.status === 'Ativo');
+  const formados = data.filter(a => a.status === 'Formado');
+  const taxa = total ? ((evadidos.length / total) * 100).toFixed(1) : 0;
+  const tempoMedio = evadidos.length ? (evadidos.reduce((s,a) => s + a.meses, 0) / evadidos.length).toFixed(1) : 0;
+
+  document.getElementById('kpiEvasao').textContent = taxa + '%';
+  document.getElementById('kpiEvadidos').textContent = evadidos.length;
+  document.getElementById('kpiAtivos').textContent = ativos.length;
+  document.getElementById('kpiTempoMedio').textContent = tempoMedio;
+
+  // Evasao por curso
+  const cursos = [...new Set(data.filter(a => a.status === 'Evadido').map(a => a.curso))];
+  const evadidosPorCurso = cursos.map(c => ({ curso: c, count: data.filter(a => a.curso === c && a.status === 'Evadido').length }));
+  const totalPorCurso = cursos.map(c => ({ curso: c, count: data.filter(a => a.curso === c).length }));
+  buildBarChart('chartCurso', evadidosPorCurso.map(e => ({ label: e.curso, value: e.count })), 'Nº de Evadidos', 'rgba(211,47,47,0.7)');
+
+  // Motivos
+  const motivos = {};
+  evadidos.forEach(a => { if (a.motivo) { motivos[a.motivo] = (motivos[a.motivo] || 0) + 1; } });
+  const motivosData = Object.entries(motivos).sort((a,b) => b[1] - a[1]);
+  buildPieChart('chartMotivos', motivosData.map(([l,v]) => ({ label: l, value: v })));
+
+  // Idade
+  const faixas = ['18-25','26-35','36-45','46+'];
+  const evadidosPorIdade = faixas.map(f => {
+    let min, max;
+    if (f === '46+') { min = 46; max = 99; }
+    else { const p = f.split('-'); min = parseInt(p[0]); max = parseInt(p[1]); }
+    return { faixa: f, count: evadidos.filter(a => a.idade >= min && a.idade <= max).length };
+  });
+  buildBarChart('chartIdade', evadidosPorIdade.map(e => ({ label: e.faixa, value: e.count })), 'Evadidos', 'rgba(245,124,0,0.7)');
+
+  // Sexo + Trabalho
+  const cat = ['M-Trabalha','M-Não Trabalha','F-Trabalha','F-Não Trabalha'];
+  const catData = cat.map(c => {
+    const p = c.split('-');
+    return { label: c, value: data.filter(a => a.sexo === p[0] && a.trabalha === p[1] && a.status === 'Evadido').length };
+  });
+  buildBarChart('chartSexoTrab', catData, 'Evadidos', 'rgba(21,101,192,0.7)');
+
+  // Serie histórica
+  const semestres = ['2022.1','2022.2','2023.1','2023.2','2024.1'];
+  const serieEvasao = semestres.map(s => {
+    const totalSem = data.filter(a => a.ingresso === s).length;
+    const evadSem = data.filter(a => a.ingresso === s && a.status === 'Evadido').length;
+    return { semestre: s, taxa: totalSem ? ((evadSem / totalSem) * 100).toFixed(1) : 0 };
+  });
+  buildLineChart('chartSerieHist', serieEvasao.map(e => e.semestre), serieEvasao.map(e => parseFloat(e.taxa)), 'Taxa de Evasão (%)', 'rgba(211,47,47,1)');
+
+  // Tabela de risco
+  const riscos = data.filter(a => a.status === 'Ativo').map(a => ({ ...a, risco: calcRisco(a) })).sort((a,b) => {
+    const ordem = {'🔴 Alto': 3, '🟡 Médio': 2, '🟢 Baixo': 1};
+    return ordem[b.risco] - ordem[a.risco];
+  });
+  const tbody = document.getElementById('tabelaRisco');
+  tbody.innerHTML = riscos.slice(0, 8).map(a => {
+    const cls = a.risco.includes('Alto') ? 'risk-high' : a.risco.includes('Médio') ? 'risk-med' : 'risk-low';
+    return `<tr><td>${a.nome}</td><td>${a.curso}</td><td>${a.idade}</td><td>${a.trabalha}</td><td>${a.filhos}</td><td>${a.meses}</td><td><span class="status-ativo">Ativo</span></td><td class="${cls}">${a.risco}</td></tr>`;
+  }).join('');
+}
+
+function buildBarChart(id, data, label, color) {
+  const ctx = document.getElementById(id).getContext('2d');
+  if (window['chart_' + id]) window['chart_' + id].destroy();
+  window['chart_' + id] = new Chart(ctx, {
+    type: 'bar', data: {
+      labels: data.map(d => d.label),
+      datasets: [{ label, data: data.map(d => d.value), backgroundColor: color, borderRadius: 6 }]
+    },
+    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+}
+
+function buildPieChart(id, data) {
+  const ctx = document.getElementById(id).getContext('2d');
+  if (window['chart_' + id]) window['chart_' + id].destroy();
+  const colors = ['#d32f2f','#f57c00','#fbc02d','#388e3c','#1976d2','#7b1fa2','#00796b'];
+  window['chart_' + id] = new Chart(ctx, {
+    type: 'doughnut', data: {
+      labels: data.map(d => d.label),
+      datasets: [{ data: data.map(d => d.value), backgroundColor: colors.slice(0, data.length) }]
+    },
+    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } } }
+  });
+}
+
+function buildLineChart(id, labels, data, label, color) {
+  const ctx = document.getElementById(id).getContext('2d');
+  if (window['chart_' + id]) window['chart_' + id].destroy();
+  window['chart_' + id] = new Chart(ctx, {
+    type: 'line', data: {
+      labels,
+      datasets: [{ label, data, borderColor: color, backgroundColor: color.replace('1)', '0.1)'), fill: true, tension: 0.3, pointRadius: 5 }]
+    },
+    options: { responsive: true, maintainAspectRatio: true,
+      scales: { y: { beginAtZero: true, max: 80, ticks: { callback: v => v + '%' } } }
+    }
+  });
+}
+
+// Init filters and dashboard
+function initFilters() {
+  const cursos = getCourses(alunos);
+  const semestres = getSemesters(alunos);
+  const selCurso = document.getElementById('filterCurso');
+  cursos.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; selCurso.appendChild(o); });
+  const selSem = document.getElementById('filterSemestre');
+  semestres.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; selSem.appendChild(o); });
+}
+
+initFilters();
+updateDashboard();
+</script>
+</body>
+</html>

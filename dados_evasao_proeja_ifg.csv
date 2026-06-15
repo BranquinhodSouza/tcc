@@ -1,0 +1,51 @@
+id_aluno,nome,idade,sexo,raca,renda_familiar,trabalha,bairro,possui_filhos,curso,semestre_ingresso,semestre_evasao,status,meses_cursados,motivo_evasao_categoria
+1,João Silva,24,M,Pardo,1200,Sim,Leste,Não,Cozinha,2022.1,2022.2,Evadido,6,Trabalho
+2,Maria Santos,31,F,Preta,900,Sim,Norte,Sim,Alimentação,2022.1,,Ativo,48,
+3,Carlos Pereira,19,M,Branco,1500,Não,Sul,Não,Cozinha,2023.1,2023.1,Evadido,3,Desinteresse
+4,Ana Oliveira,45,F,Parda,1100,Sim,Oeste,Sim,Alimentação,2022.2,2023.1,Evadido,6,Trabalho
+5,Paulo Lima,28,M,Preto,850,Sim,Centro,Não,Cozinha,2023.1,2024.1,Evadido,12,Currículo
+6,Lúcia Costa,36,F,Branca,2000,Sim,Norte,Sim,Alimentação,2022.1,,Ativo,48,
+7,Rafael Souza,22,M,Pardo,1300,Sim,Leste,Não,Cozinha,2023.2,2023.2,Evadido,3,Trabalho
+8,Juliana Rocha,29,F,Preta,950,Sim,Sul,Sim,Alimentação,2023.1,2023.2,Evadido,6,Doença na família
+9,Fernando Alves,41,M,Branco,1800,Sim,Centro,Não,Cozinha,2022.2,,Formado,36,
+10,Patrícia Gomes,33,F,Parda,1000,Sim,Norte,Sim,Alimentação,2022.1,2022.2,Evadido,6,Trabalho
+11,Lucas Martins,20,M,Preto,700,Não,Leste,Não,Cozinha,2024.1,2024.1,Evadido,3,Gravidez parceira
+12,Amanda Ribeiro,27,F,Branca,1600,Sim,Oeste,Não,Alimentação,2023.1,,Ativo,30,
+13,Diego Santos,38,M,Pardo,1400,Sim,Centro,Sim,Cozinha,2022.1,2023.2,Evadido,18,Trabalho
+14,Larissa Lima,30,F,Preta,880,Sim,Norte,Sim,Alimentação,2023.2,2024.1,Evadido,6,Horário incompatível
+15,Rodrigo Costa,23,M,Branco,2100,Sim,Leste,Não,Cozinha,2022.2,2023.1,Evadido,6,Currículo
+16,Michele Souza,42,F,Parda,950,Sim,Sul,Sim,Alimentação,2022.1,,Ativo,42,
+17,Eduardo Pereira,26,M,Preto,780,Sim,Centro,Não,Cozinha,2024.1,2024.1,Evadido,3,Trabalho
+18,Camila Oliveira,34,F,Branca,1900,Não,Oeste,Sim,Alimentação,2023.2,,Ativo,24,
+19,Gustavo Santos,21,M,Pardo,1100,Sim,Norte,Não,Cozinha,2023.1,2023.1,Evadido,3,Horário incompatível
+20,Vanessa Lima,39,F,Preta,920,Sim,Leste,Sim,Alimentação,2022.2,2023.1,Evadido,6,Doença na família
+21,Thiago Rocha,25,M,Branco,1350,Sim,Centro,Não,Cozinha,2023.2,,Ativo,24,
+22,Andréia Costa,37,F,Parda,870,Sim,Sul,Sim,Alimentação,2022.1,2022.2,Evadido,6,Trabalho
+23,Leonardo Silva,44,M,Preto,1050,Sim,Norte,Não,Cozinha,2023.1,2023.2,Evadido,6,Currículo
+24,Juliana Santos,28,F,Branca,1700,Sim,Oeste,Sim,Alimentação,2024.1,,Ativo,12,
+25,Fábio Pereira,35,M,Pardo,1250,Sim,Leste,Não,Cozinha,2022.2,,Formado,36,
+26,Tatiane Lima,43,F,Preta,800,Sim,Centro,Sim,Alimentação,2023.1,2023.2,Evadido,6,Trabalho
+27,Marcos Souza,32,M,Branco,1500,Sim,Norte,Não,Cozinha,2022.1,2023.1,Evadido,12,Horário incompatível
+28,Renata Oliveira,29,F,Parda,980,Sim,Sul,Sim,Alimentação,2022.2,,Ativo,30,
+29,Gabriel Santos,47,M,Preto,730,Sim,Leste,Não,Cozinha,2024.1,2024.1,Evadido,3,Trabalho
+30,Eliane Costa,41,F,Branca,1400,Sim,Oeste,Sim,Alimentação,2023.1,2024.1,Evadido,12,Doença na família
+31,Vinicius Lima,36,M,Pardo,1200,Sim,Centro,Não,Cozinha,2023.2,,Ativo,18,
+32,Priscila Rocha,27,F,Preta,850,Sim,Norte,Sim,Alimentação,2022.2,2023.1,Evadido,6,Trabalho
+33,Alexandre Silva,20,M,Branco,2000,Não,Leste,Não,Cozinha,2023.1,2023.1,Evadido,3,Desinteresse
+34,Simone Costa,48,F,Parda,1100,Sim,Centro,Sim,Alimentação,2022.1,,Formado,36,
+35,Daniel Pereira,39,M,Preto,900,Sim,Sul,Não,Cozinha,2024.1,,Ativo,12,
+36,Luciana Santos,35,F,Branca,1600,Sim,Oeste,Sim,Alimentação,2022.2,2023.1,Evadido,6,Trabalho
+37,Hugo Lima,30,M,Pardo,1300,Sim,Norte,Não,Cozinha,2023.1,2024.1,Evadido,12,Currículo
+38,Viviane Souza,44,F,Preta,780,Sim,Leste,Sim,Alimentação,2022.1,2022.2,Evadido,6,Trabalho
+39,William Costa,48,M,Branco,1500,Sim,Centro,Não,Cozinha,2023.2,,Ativo,18,
+40,Débora Oliveira,32,F,Parda,950,Sim,Sul,Sim,Alimentação,2024.1,,Ativo,12,
+41,Mateus Santos,19,M,Preto,680,Não,Norte,Não,Cozinha,2023.1,2023.2,Evadido,6,Desinteresse
+42,Fernanda Rocha,26,F,Branca,1700,Sim,Oeste,Não,Alimentação,2022.2,2022.2,Evadido,3,Trabalho
+43,Jorge Silva,40,M,Pardo,1200,Sim,Centro,Sim,Cozinha,2022.1,2023.2,Evadido,18,Horário incompatível
+44,Aline Costa,37,F,Preta,900,Sim,Leste,Sim,Alimentação,2023.1,,Ativo,24,
+45,Igor Lima,33,M,Branco,1450,Sim,Norte,Não,Cozinha,2023.2,2024.1,Evadido,6,Trabalho
+46,Rosângela Santos,46,F,Parda,850,Sim,Sul,Sim,Alimentação,2022.2,,Formado,36,
+47,Felipe Almeida,24,M,Preto,1050,Sim,Centro,Não,Cozinha,2023.1,2023.1,Evadido,3,Trabalho
+48,Cristiane Oliveira,38,F,Branca,1350,Sim,Oeste,Sim,Alimentação,2023.2,,Ativo,18,
+49,Francisco Souza,28,M,Pardo,1150,Sim,Norte,Não,Cozinha,2022.1,2024.1,Evadido,24,Currículo
+50,Adriana Lima,42,F,Preta,820,Sim,Leste,Sim,Alimentação,2024.1,,Ativo,12,
